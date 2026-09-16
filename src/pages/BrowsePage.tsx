@@ -19,6 +19,8 @@ export default function BrowsePage() {
   const [input, setInput] = useState(query);
   const debouncedInput = useDebounce(input, 400);
 
+  const hasActiveFilters = Boolean(query || genreId || year || minRating || sort || page > 1);
+
   // When the debounced value settles, write it into the URL.
   useEffect(() => {
     setSearchParams(
@@ -50,6 +52,11 @@ export default function BrowsePage() {
       },
       { replace: true }
     );
+  }
+
+  function clearAllFilters() {
+    setInput("");
+    setSearchParams({}, {replace: true}); //wipe all URL params -> back to popular, page 1
   }
 
   // --- genre list for the dropdown ---
@@ -140,6 +147,14 @@ export default function BrowsePage() {
           <option value="primary_release_date.desc">Newest</option>
           <option value="primary_release_date.asc">Oldest</option>
         </select>
+
+        <button 
+          onClick={clearAllFilters} 
+          disabled={!hasActiveFilters}
+          className="filter-select"
+        >
+          Clear filters
+        </button>
       </div>
 
       {isSearching && (
